@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AXISSTEROSS</title>
+    <link rel="stylesheet" href="./assets/style.css">
+</head>
+<body>
+    <div class="KARSIM">
+        <form class="form-KARSIM">
+            <input id="NIK" class="input-form" type="number" name="NIK" placeholder="NIK">
+            <input class="input-form" type="text" name="NamaLengkap" placeholder="Nama Lengkap" id="Nama_Lengkap">
+            <div class="button-group">
+                <a class="button" onclick="handleSubmit(event,'daftar')">SAYA PENGGUNA BARU</a>
+                <button class="button" onclick="handleSubmit(event,'masuk')">Masuk</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function checkLogin() {
+            if (localStorage.setItem ("isLoggedIn") !== null ) {
+              window.location.replace("/dashboard.html");
+            }
+        }
+        checkLogin();
+
+async function handleSubmit(event, aksi) {
+event.preventDefault();
+console.log(aksi);
+
+const NIK = document.getElementById("NIK").value;
+
+const Nama_Lengkap = document.getElementById("Nama_Lengkap").value;
+
+if (!NIK || !Nama_Lengkap) {
+    return alert("Form tidak boleh kosong");
+    
+}
+
+if (Nama_Lengkap == "arya") {
+    return alert("nama terblokir");
+    
+}
+
+let formData = new formData();
+formData.append("nik", NIK);
+formData.append("nama_lengkap", Nama_Lengkap);
+
+if(aksi === 'daftar') {
+    FormData.append("aksi", "daftar");
+}else {
+    FormData.append("aksi", "login");
+}
+// console.log(formData)
+let object = {};
+formData.forEach((value, key) => (object[key] =value) )
+let json = JSON.stringify(object);
+console.log(json); 
+
+if(aksi === 'daftar') {
+    try {
+        const response = await fetch("http://lokalhost", {
+            method : "POST",
+            headers: {
+                'Content-Type' : "application/json",
+            },
+            body: json,
+        });
+        let data = await response.json();
+        console.log(data);
+        alert(data.status);
+        if (data.status == "Berhasil Mendaftar") {
+            alert("Berhasil Mendaftar");
+            localStorage.setItem("isLogedin", data.Nik);
+            localStorage.setItem("isnamalengkap", data.Nama_Lengkap);
+            window.location.replace("/dashboard.html");
+        }else {
+            alert("NIK Sudah Terdaftar");
+        }
+    } catch (error) {
+        console.log(error);
+    }
+
+}
+try {
+    const response = await fetch("http://localhost", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: json,
+    });
+    let data = await response.json();
+    console.log(data);
+
+}catch (error) {
+    console.log(error);
+
+}
+
+
+
+
+// if (NIK == "123" && Nama_Lengkap === "karsim"){
+//     // alert("login Berhasil!");
+//     localStorage.setItem("isLoggedIn", "admin");
+//     window.location.replace("/dashboard.html");
+
+// } else {
+//     alert("Username atau Paswword Salah")
+// }
+}
+    </script>
+
+</body>
+</html>
